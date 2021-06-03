@@ -235,6 +235,8 @@ while True:
     #         pen.shape('python2.gif')
     #         wn.mainloop()
 
+
+
 # Collision for Key
     if player.is_aabb_collision(key):
         if player.x < key.x - key.width / 2.0 and player.dx > 0:
