@@ -6,7 +6,7 @@ import random
 WIDTH = 1200
 HEIGHT = 800
 
-GRAVITY = -0.01
+GRAVITY = -0.12
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -78,7 +78,7 @@ class Player(Sprite):
         self.dy += GRAVITY
 
     def jump(self):
-        self.dy = 2.5
+        self.dy = 7
 
     def left(self):
         self.dx -= 1
@@ -95,10 +95,19 @@ class Portal(Sprite):
         Sprite.__init__(self, x, y, width, height)
         self.color = BLUE
 
+class Large(Sprite):
+    def __init__(self, x, y, width, height):
+        Sprite.__init__(self, x, y, width, height)
+        self.color = BLUE
+
+
+
 # Create font
 
 # Create sounds
+
 # Create game objects
+large = Large(180, 240, 30, 60)
 portal = Portal(400, -160, 20, 100)
 player = Player(0, 400, 20, 40)
 blocks = []
@@ -163,6 +172,24 @@ while True:
             player.width = 10
             player.height = 20
 
+
+    # Collision for Enlarger
+    if player.is_aabb_collision(large):
+        # Player is to the left
+        if player.x < large.x - large.width / 2.0 and player.dx > 0:
+            player.width = 20
+            player.height = 40
+        # Player is to the right
+        elif player.x > large.x + large.width / 2.0 and player.dx < 0:
+            player.width = 20
+            player.height = 40
+        # Player is above
+        elif player.y > large.y:
+            player.width = 20
+            player.height = 40
+
+
+
                 # Border check the player
     if player.y < -400:
         player.goto(0, 400)
@@ -172,6 +199,7 @@ while True:
     # Render (Draw stuff)
 
     # Render objects
+    large.render()
     portal.render()
     player.render()
     for block in blocks:
