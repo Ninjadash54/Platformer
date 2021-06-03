@@ -1,19 +1,18 @@
 import turtle
+import sys
 import math
+import random
 
 WIDTH = 1200
 HEIGHT = 800
 
-GRAVITY = -0.12
+GRAVITY = -0.01
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
-PURPLE = (122, 37, 118)
-
-
 
 # Create the screen
 wn = turtle.Screen()
@@ -41,7 +40,7 @@ class Sprite():
         self.width = width
         self.height = height
         self.color = WHITE
-        self.friction = 0.999
+        self.friction = 0.99
 
     def goto(self, x, y):
         self.x = x
@@ -79,7 +78,7 @@ class Player(Sprite):
         self.dy += GRAVITY
 
     def jump(self):
-        self.dy = 7
+        self.dy = 2.5
 
     def left(self):
         self.dx -= 1
@@ -96,37 +95,21 @@ class Portal(Sprite):
         Sprite.__init__(self, x, y, width, height)
         self.color = BLUE
 
-class Large(Sprite):
-    def __init__(self, x, y, width, height):
-        Sprite.__init__(self, x, y, width, height)
-        self.color = BLUE
-
-class Key(Sprite):
-    def __init__(self, x, y, width, height):
-        Sprite.__init__(self, x, y, width, height)
-        self.color = RED
-
-class End(Sprite):
-    def __init__(self, x, y, width, height):
-        Sprite.__init__(self, x, y, width, height)
-        self.color = PURPLE
-
-
 # Create font
 
 # Create sounds
 
 # Create game objects
-end = End(-40, -70, 50, 40)
-key = Key(20, 20, 40, 50)
 portal = Portal(400, -160, 20, 100)
 player = Player(0, 400, 20, 40)
-large = Large(180, 240, 30, 60)
 blocks = []
 blocks.append(Sprite(0, 200, 400, 20))
 blocks.append(Sprite(0, 0, 600, 20))
 blocks.append(Sprite(0, -200, 1000, 20))
 blocks.append(Sprite(-400, -100, 100, 200))
+
+
+
 
 
 def player_jump():
@@ -144,11 +127,13 @@ wn.onkeypress(player_jump, "Up")
 
 # Main game loop
 while True:
+    # Move/Update objects
     player.move()
 
     # Check for collisions
     for block in blocks:
         if player.is_aabb_collision(block):
+            # Player is to the left
             if player.x < block.x - block.width / 2.0 and player.dx > 0:
                 player.dx = 0
                 player.x = block.x - block.width / 2.0 - player.width / 2.0
@@ -165,64 +150,33 @@ while True:
             elif player.y < block.y:
                 player.dy = 0
                 player.y = block.y - block.height / 2.0 - player.height / 2.0
-        # Player is to the left
 
-# Collision for smaller
-if player.is_aabb_collision(portal):
-    # Player is to the left
-    if player.x < portal.x - portal.width / 2.0 and player.dx > 0:
-        player.width = 10
-        player.height = 20
-    # Player is to the right
-    elif player.x > portal.x + portal.width / 2.0 and player.dx < 0:
-        player.width = 10
-        player.height = 20
-    # Player is above
-    elif player.y > portal.y:
-        player.width = 10
-        player.height = 20
-
-# Collision for Enlarger
-if player.is_aabb_collision(large):
-    # Player is to the left
-    if player.x < large.x - large.width / 2.0 and player.dx > 0:
-        player.width = 20
-        player.height = 40
-    # Player is to the right
-    elif player.x > large.x + large.width / 2.0 and player.dx < 0:
-        player.width = 20
-        player.height = 40
-    # Player is above
-    elif player.y > large.y:
-        player.width = 20
-        player.height = 40
-
-if player.is_aabb_collision(key):
-     # Player is to the left
-     if player.x < key.x - key.width / 1.0 and player.dx > 0:
-         key.width = 1
-         key.height = 1
-#       Player is to the right
-     elif player.x > key.x + key.width / 1.0 and player.dx < 0:
-        key.width = 1
-        key.height = 1
+    # Collision for smaller
+    if player.is_aabb_collision(portal):
+        if player.x < portal.x - portal.width / 2.0 and player.dx > 0:
+            player.width = 10
+            player.height = 20
+        elif player.x > portal.x + portal.width / 2.0 and player.dx < 0:
+            player.width = 10
+            player.height = 20
+        # Player is above
+        elif player.y > portal.y:
+            player.width = 10
+            player.height = 20
 
                 # Border check the player
-if player.y < -400:
-    player.goto(0, 400)
-    player.dx = 0
-    player.dy = 0
+    if player.y < -400:
+        player.goto(0, 400)
+        player.dx = 0
+        player.dy = 0
 
     # Render (Draw stuff)
 
     # Render objects
-end.render()
-player.render()
-key.render()
-portal.render()
-large.render()
-for block in blocks:
-    block.render()
+    portal.render()
+    player.render()
+    for block in blocks:
+        block.render()
 
     # Flip the display
     wn.update()
