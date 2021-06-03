@@ -111,7 +111,15 @@ class Key(Sprite):
         Sprite.__init__(self, x, y, width, height)
         self.color = YELLOW
 
+class End(Sprite):
+    def __init__(self, x, y, width, height):
+        Sprite.__init__(self, x, y, width, height)
+        self.color = RED
 
+class Tunnel(Sprite):
+    def __init__(self, x, y, width, height):
+        Sprite.__init__(self, x, y, width, height)
+        self.color = GREEN
 
 
 
@@ -120,14 +128,15 @@ class Key(Sprite):
 # Create sounds
 
 # Create game objects
+end = End(-370, -180, 20,20)
 open = Opener(-350, -100, 80, 200)
-key = Key(-40, 20, 50, 40)
+key = Key(-40, 20, 1, 1)
+tun = Tunnel(0, -5, 600, 20)
 large = Large(180, 240, 30, 60)
 portal = Portal(400, -160, 20, 100)
 player = Player(0, 400, 20, 40)
 blocks = []
 blocks.append(Sprite(0, 200, 400, 20))
-blocks.append(Sprite(0, 50, 600, 20))
 blocks.append(Sprite(0, -5, 600, 20))
 blocks.append(Sprite(0, -200, 1000, 20))
 blocks.append(Sprite(-400, -100, 20, 200))
@@ -178,13 +187,23 @@ while True:
         if player.x < portal.x - portal.width / 2.0 and player.dx > 0:
             player.width = 10
             player.height = 20
+            tun.y = 50
+            key.width = 50
+            key.height = 40
         elif player.x > portal.x + portal.width / 2.0 and player.dx < 0:
             player.width = 10
             player.height = 20
+            tun.y = 50
+            key.width = 50
+            key.height = 40
         # Player is above
         elif player.y > portal.y:
             player.width = 10
             player.height = 20
+            tun.y = 50
+            key.width = 50
+            key.height = 40
+
 
     if player.is_aabb_collision(key):
         if player.x < key.x - key.width / 2.0 and player.dx > 0:
@@ -196,6 +215,7 @@ while True:
             key.height = 0.0000001
             key.width = 0.0000001
             open.x = -300
+
         # Player is above
         elif player.y > key.y:
             key.height = 0.0000001
@@ -253,6 +273,8 @@ while True:
     # Render (Draw stuff)
 
     # Render objects
+    tun.render()
+    end.render()
     open.render()
     key.render()
     large.render()
