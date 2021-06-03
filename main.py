@@ -99,6 +99,10 @@ class Large(Sprite):
     def __init__(self, x, y, width, height):
         Sprite.__init__(self, x, y, width, height)
         self.color = BLUE
+class End(Sprite):
+    def __init__(self, x, y, width, height):
+        Sprite.__init__(self, x, y, width, height)
+        self.color = RED
 
 
 
@@ -107,6 +111,7 @@ class Large(Sprite):
 # Create sounds
 
 # Create game objects
+end = End(-40, -70, 50, 40)
 large = Large(180, 240, 30, 60)
 portal = Portal(400, -160, 20, 100)
 player = Player(0, 400, 20, 40)
@@ -172,6 +177,23 @@ while True:
             player.width = 10
             player.height = 20
 
+    if player.is_aabb_collision(end):
+        if player.x < end.x - end.width / 2.0 and player.dx > 0:
+            end.height = 40
+            end.width = 30
+        # Player is to the right
+        elif player.x > end.x + end.width / 2.0 and player.dx < 0:
+            end.height = 40
+            end.width = 30
+        # Player is above
+        elif player.y > end.y:
+            end.height = 40
+            end.width = 30
+        # Player is below
+        elif player.y < end.y:
+            end.height = 40
+            end.width = 30
+
 
     # Collision for Enlarger
     if player.is_aabb_collision(large):
@@ -190,6 +212,7 @@ while True:
 
 
 
+
                 # Border check the player
     if player.y < -400:
         player.goto(0, 400)
@@ -199,6 +222,7 @@ while True:
     # Render (Draw stuff)
 
     # Render objects
+    end.render()
     large.render()
     portal.render()
     player.render()
