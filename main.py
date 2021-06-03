@@ -14,6 +14,7 @@ BLUE = (0, 0, 255)
 PURPLE = (122, 37, 118)
 
 
+
 # Create the screen
 wn = turtle.Screen()
 wn.colormode(255)
