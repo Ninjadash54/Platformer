@@ -98,7 +98,6 @@ class Portal(Sprite):
 # Create font
 
 # Create sounds
-
 # Create game objects
 portal = Portal(400, -160, 20, 100)
 player = Player(0, 400, 20, 40)
