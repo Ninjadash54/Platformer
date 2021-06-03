@@ -13,11 +13,12 @@ WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
+YELLOW = (246, 169, 15)
 
 # Create the screen
 wn = turtle.Screen()
 wn.colormode(255)
-wn.title("Platformer")
+wn.title("Pr")
 wn.setup(WIDTH, HEIGHT)
 wn.bgcolor(BLACK)
 wn.tracer(0)
@@ -99,10 +100,18 @@ class Large(Sprite):
     def __init__(self, x, y, width, height):
         Sprite.__init__(self, x, y, width, height)
         self.color = BLUE
-class End(Sprite):
+
+class Opener(Sprite):
     def __init__(self, x, y, width, height):
         Sprite.__init__(self, x, y, width, height)
-        self.color = RED
+        self.color = WHITE
+
+class Key(Sprite):
+    def __init__(self, x, y, width, height):
+        Sprite.__init__(self, x, y, width, height)
+        self.color = YELLOW
+
+
 
 
 
@@ -111,25 +120,25 @@ class End(Sprite):
 # Create sounds
 
 # Create game objects
-end = End(-40, -70, 50, 40)
+open = Opener(-350, -100, 80, 200)
+key = Key(-40, 20, 50, 40)
 large = Large(180, 240, 30, 60)
 portal = Portal(400, -160, 20, 100)
 player = Player(0, 400, 20, 40)
 blocks = []
 blocks.append(Sprite(0, 200, 400, 20))
-blocks.append(Sprite(0, 0, 600, 20))
+blocks.append(Sprite(0, 50, 600, 20))
+blocks.append(Sprite(0, -5, 600, 20))
 blocks.append(Sprite(0, -200, 1000, 20))
-blocks.append(Sprite(-400, -100, 100, 200))
-
-
-
-
+blocks.append(Sprite(-400, -100, 20, 200))
 
 def player_jump():
     for block in blocks:
         if player.is_aabb_collision(block):
             player.jump()
             break
+
+
 
 
 # Keyboard binding
@@ -177,22 +186,44 @@ while True:
             player.width = 10
             player.height = 20
 
-    if player.is_aabb_collision(end):
-        if player.x < end.x - end.width / 2.0 and player.dx > 0:
-            end.height = 40
-            end.width = 30
+    if player.is_aabb_collision(key):
+        if player.x < key.x - key.width / 2.0 and player.dx > 0:
+            key.height = 0.0000001
+            key.width = 0.0000001
+            open.x = -300
         # Player is to the right
-        elif player.x > end.x + end.width / 2.0 and player.dx < 0:
-            end.height = 40
-            end.width = 30
+        elif player.x > key.x + key.width / 2.0 and player.dx < 0:
+            key.height = 0.0000001
+            key.width = 0.0000001
+            open.x = -300
         # Player is above
-        elif player.y > end.y:
-            end.height = 40
-            end.width = 30
+        elif player.y > key.y:
+            key.height = 0.0000001
+            key.width = 0.0000001
+            open.x = -300
         # Player is below
-        elif player.y < end.y:
-            end.height = 40
-            end.width = 30
+        elif player.y < key.y:
+            key.height = 0.0000001
+            key.width = 0.0000001
+            open.x = -300
+
+    if player.is_aabb_collision(open):
+        if player.x < open.x - open.width / 2.0 and player.dx > 0:
+            player.dx = 0
+            player.x = open.x - open.width / 2.0 - player.width / 2.0
+        # Player is to the right
+        elif player.x > open.x + open.width / 2.0 and player.dx < 0:
+            player.dx = 0
+            player.x = open.x + open.width / 2.0 + player.width / 2.0
+        # Player is above
+        elif player.y > open.y:
+            player.dy = 0
+            player.y = open.y + open.height / 2.0 + player.height / 2.0 - 1
+            player.dx *= open.friction
+        # Player is below
+        elif player.y < open.y:
+            player.dy = 0
+            player.y = open.y - open.height / 2.0 - player.height / 2.0
 
 
     # Collision for Enlarger
@@ -222,7 +253,8 @@ while True:
     # Render (Draw stuff)
 
     # Render objects
-    end.render()
+    open.render()
+    key.render()
     large.render()
     portal.render()
     player.render()
