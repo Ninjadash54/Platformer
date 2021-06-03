@@ -3,18 +3,22 @@ import sys
 import math
 import random
 from inspect import v
-
+#Screen Width/Height
 WIDTH = 1200
 HEIGHT = 800
 
+# The Gravity of the Platformer
 GRAVITY = -0.12
 
+#All Possible Colors Needed For this
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
-GREEN = (0, 255, 0)
+GREEN = (11, 102, 35)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 YELLOW = (246, 169, 15)
+YG = (199, 234, 70)
+
 
 # Create the screen
 wn = turtle.Screen()
@@ -70,7 +74,7 @@ class Sprite():
         y_collision = (math.fabs(self.y - other.y) * 2) < (self.height + other.height)
         return (x_collision and y_collision)
 
-
+#Player
 class Player(Sprite):
     def __init__(self, x, y, width, height):
         Sprite.__init__(self, x, y, width, height)
@@ -93,32 +97,32 @@ class Player(Sprite):
         self.dx += 1
         if self.dx > 3:
             self.dx = 3
-
+#Portal
 class Portal(Sprite):
     def __init__(self, x, y, width, height):
         Sprite.__init__(self, x, y, width, height)
         self.color = BLUE
-
+#Large
 class Large(Sprite):
     def __init__(self, x, y, width, height):
         Sprite.__init__(self, x, y, width, height)
         self.color = BLUE
-
+#Opener
 class Opener(Sprite):
     def __init__(self, x, y, width, height):
         Sprite.__init__(self, x, y, width, height)
         self.color = WHITE
-
+#Key
 class Key(Sprite):
     def __init__(self, x, y, width, height):
         Sprite.__init__(self, x, y, width, height)
         self.color = YELLOW
-
+#End
 class End(Sprite):
     def __init__(self, x, y, width, height):
         Sprite.__init__(self, x, y, width, height)
         self.color = RED
-
+#Tunnel For Key
 class Tunnel(Sprite):
     def __init__(self, x, y, width, height):
         Sprite.__init__(self, x, y, width, height)
@@ -231,29 +235,32 @@ while True:
     #         pen.shape('python2.gif')
     #         wn.mainloop()
 
-
+# Collision for Key
     if player.is_aabb_collision(key):
         if player.x < key.x - key.width / 2.0 and player.dx > 0:
             key.height = 0.0000001
             key.width = 0.0000001
             open.x = -300
+            player.color = YG
         # Player is to the right
         elif player.x > key.x + key.width / 2.0 and player.dx < 0:
             key.height = 0.0000001
             key.width = 0.0000001
             open.x = -300
-
+            player.color = YG
         # Player is above
         elif player.y > key.y:
             key.height = 0.0000001
             key.width = 0.0000001
             open.x = -300
+            player.color = YG
         # Player is below
         elif player.y < key.y:
             key.height = 0.0000001
             key.width = 0.0000001
             open.x = -300
-
+            player.color = YG
+# Collision for Tunnel
     if player.is_aabb_collision(tun):
         # Player is to the left
         if player.x < tun.x - tun.width / 2.0 and player.dx > 0:
@@ -271,7 +278,7 @@ while True:
         elif player.y < tun.y:
             player.dy = 0
             player.y = tun.y - tun.height / 2.0 - player.height / 2.0
-
+# Collision for Opener
     if player.is_aabb_collision(open):
         if player.x < open.x - open.width / 2.0 and player.dx > 0:
             player.dx = 0
