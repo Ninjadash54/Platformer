@@ -34,7 +34,7 @@ wn.tracer(0)
 pen = turtle.Turtle()
 pen.speed(0)
 pen.penup()
-pen.color(WHITE)
+pen.color(BLUE)
 pen.hideturtle()
 
 
@@ -85,8 +85,12 @@ class Player(Sprite):
         self.y += self.dy
         self.dy += GRAVITY
 
+    def fall(self):
+        self.dy = -7
+
     def jump(self):
         self.dy = 7
+
 
     def left(self):
         self.dx -= 1
@@ -128,6 +132,13 @@ class Tunnel(Sprite):
         Sprite.__init__(self, x, y, width, height)
         self.color = WHITE
 
+class Secret(Sprite):
+    def __init__(self, x, y, width, height, ):
+        Sprite.__init__(self, x, y, width, height)
+        self.color = WHITE
+
+
+
 
 
 # Create font
@@ -135,7 +146,9 @@ class Tunnel(Sprite):
 # Create sounds
 
 # Create game objects
-end = End(-370, -180, 20,20)
+end = End(-560 , 300, 10, 20)
+secret = Secret(560, 350, 60, 20)
+grav = End(-370, -180, 20, 20)
 open = Opener(-350, -100, 80, 200)
 key = Key(-40, 0, 1, 1)
 tun = Tunnel(0, -7, 600, 18)
@@ -146,6 +159,7 @@ blocks = []
 blocks.append(Sprite(0, 200, 400, 20))
 blocks.append(Sprite(0, -5, 600, 20))
 blocks.append(Sprite(0, -200, 1000, 20))
+blocks.append(Sprite(-200, 350, 1500, 20))
 blocks.append(Sprite(-400, -100, 20, 200))
 
 def player_jump():
@@ -162,6 +176,7 @@ wn.listen()
 wn.onkeypress(player.left, "Left")
 wn.onkeypress(player.right, "Right")
 wn.onkeypress(player_jump, "Up")
+wn.onkeypress(player.fall, "Down")
 
 # Main game loop
 while True:
@@ -214,26 +229,6 @@ while True:
             key.height = 40
             key.y = 20
 
-    # if player.is_aabb_collision(end):
-    #     if player.x < end.x - end.width / 2.0 and player.dx > 0:
-    #         wn.addshape('python2.gif')
-    #         pen.shape('python2.gif')
-    #         wn.mainloop()
-    #     # Player is to the right
-    #     elif player.x > end.x + end.width / 2.0 and player.dx < 0:
-    #         wn.addshape('python2.gif')
-    #         pen.shape('python2.gif')
-    #         wn.mainloop()
-    #     # Player is above
-    #     elif player.y > end.y:
-    #         wn.addshape('python2.gif')
-    #         pen.shape('python2.gif')
-    #         wn.mainloop()
-    #     # Player is below
-    #     elif player.y < end.y:
-    #         yes = wn.addshape('python2.gif')
-    #         pen.shape('python2.gif')
-    #         wn.mainloop()
 
 
 
@@ -243,24 +238,32 @@ while True:
             key.height = 0.0000001
             key.width = 0.0000001
             open.x = -300
+            open.width = 1
+            open.height = 1
             player.color = YG
         # Player is to the right
         elif player.x > key.x + key.width / 2.0 and player.dx < 0:
             key.height = 0.0000001
             key.width = 0.0000001
             open.x = -300
+            open.width = 1
+            open.height = 1
             player.color = YG
         # Player is above
         elif player.y > key.y:
             key.height = 0.0000001
             key.width = 0.0000001
             open.x = -300
+            open.width = 1
+            open.height = 1
             player.color = YG
         # Player is below
         elif player.y < key.y:
             key.height = 0.0000001
             key.width = 0.0000001
             open.x = -300
+            open.width = 1
+            open.height = 1
             player.color = YG
 # Collision for Tunnel
     if player.is_aabb_collision(tun):
@@ -299,6 +302,21 @@ while True:
             player.dy = 0
             player.y = open.y - open.height / 2.0 - player.height / 2.0
 
+    # # Collision for Opener
+    if player.is_aabb_collision(grav):
+        if player.x < grav.x - grav.width / 2.0 and player.dx > 0:
+            GRAVITY = 0
+        # Player is to the right
+        elif player.x > open.x + open.width / 2.0 and player.dx < 0:
+            GRAVITY = 0
+        # Player is above
+        elif player.y > grav.y:
+            GRAVITY = 0
+        # Playeris below
+        elif player.y < grav.y:
+            GRAVITY = 0
+
+
 
     # Collision for Enlarger
     if player.is_aabb_collision(large):
@@ -328,8 +346,9 @@ while True:
 
     # Render objects
     # yes.render()
-    tun.render()
     end.render()
+    tun.render()
+    grav.render()
     open.render()
     key.render()
     large.render()
@@ -337,6 +356,7 @@ while True:
     player.render()
     for block in blocks:
         block.render()
+    secret.render()
 
     # Flip the display
     wn.update()
